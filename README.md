@@ -1,66 +1,13 @@
-## Foundry
+Ethereal is an NFTfi protocol, where each NFT (e.g. Gem) is backed by Ether.
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+To mint a gem with the mint function a certain amount of Ether is required -- the amount of Ether required depends on the Gem type.
 
-Foundry consists of:
+Gem types can be created and configured by the owner with the createGem and updateGem functions. Gem types can be decommisioned with the ceaseGem function.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+Each gem type has an associated collection. Gem Collections can be created and configured by the owner with the createCollection and updateCollection functions.
 
-## Documentation
+Collections have a configured validator, which, if present degems the only address which is permissioned to mint new gems.
 
-https://book.getfoundry.sh/
+Collections also carry an ethereum boolean which indicates whether the Gem is backed by native ether or wrapped staked ether. This decides which asset the user will have to provide when minting their Gem.
 
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+And finally user's are able to redeem their Gem with the redeem function. This way their Gem is burned forever and they receive the backing Ether or wstETH back.
