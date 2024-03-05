@@ -16,8 +16,57 @@ contract EtherealTest is Test {
         ethereal = new Ethereal();
         user1 = makeAddr("user1");
         user2 = makeAddr("user2");
+
     }
 
+
+    function test_try() public{
+        
+        ethereal.createCollection("1st Collection", false, address(0), true, BASE_URL);
+        ethereal.createCollection("2nd Collection", false, address(0), false, BASE_URL);
+
+        ethereal.createGem(0, 10 * 1e18, 1000, true);
+        ethereal.createGem(1, 10 * 1e18, 1000, true);
+       
+        address newpayout=makeAddr("payout");
+        address user3 = makeAddr("user3");
+
+        vm.deal(user1,100 * 1e18);
+        vm.deal(user2,100 * 1e18);
+        vm.deal(user3,100 * 1e18);
+
+        //Mint 1 Eth backed gem and 2 WstEth backed gems
+        vm.prank(user1);
+        ethereal.mint{value: 10 * 1e18}(0, user1);
+        vm.prank(user2);
+        ethereal.mint{value: 10 * 1e18}(1, user2);
+        vm.prank(user3);
+        ethereal.mint{value: 10 * 1e18}(1, user3);
+        //contract eth balance at this is 10Eth, WstEth balance=10(assuming exchange rate is ~1)
+
+        
+        vm.prank(user2);
+        ethereal.redeem(2);        
+        vm.prank(user3);
+        ethereal.redeem(3);        
+        
+        console2.log("fee accumulated ",ethereal.fees()/1e18);
+        //since fee is calculated in Eth , fee= 2Eth.
+
+        ethereal.setPayout(newpayout);
+        ethereal.withdrawFees();
+        // after fee withdrawl, contract Eth balance=10-2= 8Eth, fee=0
+        console2.log(" contrct balance",address(ethereal).balance/1e18); //8Eth
+
+
+        vm.prank(user1);
+        vm.expectRevert();
+        ethereal.redeem(1); //OutOfFund error
+        // amount to be sent to user1=10-1=9 Eth but contract balance is 8Eth
+        //User1 is unable to redeem.
+        
+    }
+    
     function _createCollection(
         string memory _name,
         bool _validator,

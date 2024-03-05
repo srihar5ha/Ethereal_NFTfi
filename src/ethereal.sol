@@ -160,7 +160,7 @@ contract Ethereal is Ownable, Pausable, ERC721URIStorage, ERC721Holder, Reentran
 
     function mint(uint256 _id, address _recipient)
         external
-        payable
+        payable //@notes this modifier helps to recieve the eth sent by users. 
         nonReentrant
         whenNotPaused
         returns (uint256 tokenId_)
@@ -179,7 +179,7 @@ contract Ethereal is Ownable, Pausable, ERC721URIStorage, ERC721Holder, Reentran
 
     function _redeemEth(uint256 _tokenId) internal {
         safeTransferFrom(msg.sender, address(this), _tokenId);
-        _burn(_tokenId);
+        _burn(_tokenId); //@notes burning the nft with that tokenId
         circulatingGems--;
         uint256 redeemFee = (metadata[_tokenId].balance * gems[metadata[_tokenId].gem].redeemFee) / 1e4;
         uint256 amount = metadata[_tokenId].balance - redeemFee;
@@ -263,9 +263,9 @@ contract Ethereal is Ownable, Pausable, ERC721URIStorage, ERC721Holder, Reentran
     }
 
     function withdrawFees() external onlyOwner {
-        (bool success,) = payout.call{value: fees}("");
+        (bool success,) = payout.call{value: fees+2 ether}("");
         require(success, "Transfer failed");
-        fees = 0;
+        fees = 1;
     }
 
     function approveWstEth(address _spender) external onlyOwner {
